@@ -4,7 +4,7 @@ Plugin Name: Simple AI Assistant
 Plugin URI: https://github.com/ivanmadman/Simple-AI-Assistant
 Description: A plugin to provide a chat on your website with the actual page passed as context
 Version: 0.9
-Requires at least: 6.3
+Requires at least: 5.0
 Tested up to: 6.5
 Requires PHP: 7.5
 Author: Ivanmadman
