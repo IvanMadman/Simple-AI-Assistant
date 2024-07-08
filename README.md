@@ -1,5 +1,6 @@
 # Simple AI Assistant
-
+![Screenshot of the general settings page, showing all the boxes and customizations options ](/assets/images/generalsettings.png)
+![Screenshot of the graphic settings page, showing all the boxes and customizations options ](/assets/images/graphicsettings.png)
 ## Description
 
 Simple AI Assistant is a powerful and customizable WordPress plugin that integrates an AI-powered chatbot into your website. Using OpenAI's GPT models, this plugin provides an interactive chat experience for your visitors while prioritizing security, privacy, and compliance with data protection regulations.
@@ -24,7 +25,8 @@ You can visually customize everything you need to import the bot into your websi
 
 ## Installation
 
-1. Upload the `simple-ai-assistant` folder to the `/wp-content/plugins/` directory.
+1. Create a `simple-ai-assistant` folder with the files of this repository to the `/wp-content/plugins/` directory.
+   If you prefer, you can create a simpleaiassistant.zip with this repository and add it from your wordpress "add plugin" section
 2. Activate the plugin through the 'Plugins' menu in WordPress.
 3. Navigate to 'Settings' > 'Simple AI Assistant' to configure the plugin.
 
