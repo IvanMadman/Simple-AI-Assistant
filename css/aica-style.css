@@ -1,0 +1,295 @@
+/* AI Chat Assistant Styles */
+
+#aica-chat-bubble {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background-color: #4a90e2;
+    border-radius: 50%;
+    color: white;
+    text-align: center;
+    line-height: 60px;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    z-index: 9998;
+}
+
+#aica-chat-bubble:hover {
+    background-color: #357abd;
+    transform: scale(1.05);
+}
+
+.aica-bottom-right { bottom: 20px; right: 20px; }
+.aica-middle-right { top: 50%; right: 20px; transform: translateY(-50%); }
+.aica-top-right { top: 20px; right: 20px; }
+
+#aica-chat-bubble.active {
+    background-color: #e74c3c;
+}
+
+#aica-chat-window {
+    position: fixed;
+    bottom: 100px;
+    right: 20px;
+    width: 350px;
+    height: 500px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 5px 40px rgba(0, 0, 0, 0.16);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 9999;
+    transition: all 0.3s ease;
+}
+
+#aica-chat-window.minimized {
+    height: 40px;
+}
+
+#aica-chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    background-color: #4a90e2;
+    color: white;
+    font-weight: bold;
+}
+
+
+#aica-close-button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 0 5px;
+}
+
+
+#aica-close-button:hover {
+    opacity: 0.8;
+}
+
+#aica-chat-messages {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.minimized #aica-chat-messages {
+    display: none;
+}
+
+.aica-message {
+    max-width: 80%;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: flex-start;
+}
+
+.aica-user-message {
+    align-self: flex-end;
+    flex-direction: row-reverse;
+}
+
+.aica-ai-message {
+    align-self: flex-start;
+}
+
+.aica-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+    margin: 0 10px;
+}
+
+.aica-user-message .aica-avatar {
+    background-color: #4a90e2;
+    color: white;
+}
+
+.aica-ai-message .aica-avatar {
+    background-color: #7ed321;
+    color: white;
+}
+
+.aica-message-content {
+    background-color: #f0f0f0;
+    padding: 10px 15px;
+    border-radius: 18px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.aica-user-message .aica-message-content {
+    background-color: #4a90e2;
+    color: white;
+}
+
+.aica-typing-indicator {
+    align-self: flex-start;
+    background-color: #f0f0f0;
+    padding: 10px 15px;
+    border-radius: 18px;
+    font-size: 14px;
+    margin-bottom: 15px;
+    color: #777;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: .5; }
+    50% { opacity: 1; }
+    100% { opacity: .5; }
+}
+
+.aica-error-message {
+    align-self: center;
+    background-color: #ffebee;
+    color: #c62828;
+    padding: 10px 15px;
+    border-radius: 18px;
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+#aica-chat-input {
+    display: flex;
+    padding: 10px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.minimized #aica-chat-input {
+    display: none;
+}
+
+#aica-user-input {
+    flex-grow: 1;
+    padding: 10px;
+    border: none;
+    font-size: 14px;
+    resize: none;
+}
+
+#aica-user-input:focus {
+    outline: none;
+}
+
+#aica-send-button {
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-left: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#aica-send-button:hover {
+    background-color: #357abd;
+}
+
+/* Scrollbar Styles */
+#aica-chat-messages::-webkit-scrollbar {
+    width: 6px;
+}
+
+#aica-chat-messages::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+#aica-chat-messages::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
+}
+
+#aica-chat-messages::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Consent Prompt Styles */
+.aica-consent-prompt {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.95);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    text-align: center;
+    z-index: 1000;
+}
+
+.aica-consent-prompt p {
+    margin-bottom: 20px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #333;
+}
+
+.aica-consent-prompt button {
+    margin: 5px;
+    padding: 10px 20px;
+    font-size: 14px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#aica-consent-agree {
+    background-color: #4a90e2;
+    color: white;
+}
+
+#aica-consent-agree:hover {
+    background-color: #357abd;
+}
+
+#aica-consent-disagree {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+#aica-consent-disagree:hover {
+    background-color: #e0e0e0;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+    #aica-chat-window {
+        width: calc(100% - 40px);
+        height: calc(65% - 120px);
+        right: 20px;
+        bottom: 80px;
+    }
+
+    #aica-chat-bubble {
+        width: 50px;
+        height: 50px;
+        line-height: 50px;
+    }
+}
