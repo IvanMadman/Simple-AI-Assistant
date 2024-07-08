@@ -25,7 +25,7 @@ You can visually customize everything you need to import the bot into your websi
 
 ## Installation
 
-1. Create a `simple-ai-assistant` folder with the files of this repository to the `/wp-content/plugins/` directory.
+1. Create a `simple-ai-assistant` folder with the files of this repository and upload it to the `/wp-content/plugins/` directory.
    If you prefer, you can create a simpleaiassistant.zip with this repository and add it from your wordpress "add plugin" section
 2. Activate the plugin through the 'Plugins' menu in WordPress.
 3. Navigate to 'Settings' > 'Simple AI Assistant' to configure the plugin.
