@@ -8,6 +8,7 @@ Requires at least: 5.0
 Tested up to: 6.5
 Requires PHP: 7.5
 Author: Ivanmadman
+Author URI: https://github.com/IvanMadman
 License: GPL2
 License URI: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 */
