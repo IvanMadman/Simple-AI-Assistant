@@ -117,6 +117,7 @@ This project is licensed under the GPL2 License.
 ## Changelog
 
 
+### 1.0.0
+- First Stable Release, updated with wp methods
 ### 0.9
 - Initial release
-
