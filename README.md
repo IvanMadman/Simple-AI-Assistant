@@ -69,7 +69,7 @@ If the user consent option is enabled, the user will have to accept that the log
 Use the system message to give your bot limits to the answer length. Something simple like "your answer shouldnt go over 200 words" almost always works. 
 Pay attention with the context options. Giving full context to your bot makes it a lot more powerful, it can remember everything and give the most useful answers, but your token usage will grow A LOT.
 Always look at your limits on the OpenAI platform and choose wisely if you really need all the context. 
-For example, if you are looking for an helper related to specific pages, you can choose to only pass the page context without the chat history.
+For example, if you are looking for a helper related to specific pages, you can choose to only pass the page context without the chat history.
 
 
 ## Security Considerations
