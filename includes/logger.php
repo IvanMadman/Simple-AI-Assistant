@@ -1,10 +1,19 @@
 <?php
 class AICA_Logger {
     private $log_file;
+    private $wp_filesystem;
 
     public function __construct() {
         $upload_dir = wp_upload_dir();
         $this->log_file = $upload_dir['basedir'] . '/aica_logs.json';
+        
+        // Initialize WP_Filesystem
+        global $wp_filesystem;
+        if (empty($wp_filesystem)) {
+            require_once(ABSPATH . '/wp-admin/includes/file.php');
+            WP_Filesystem();
+        }
+        $this->wp_filesystem = $wp_filesystem;
     }
 
     public function log($message, $level = 'info', $context = array()) {
@@ -22,19 +31,19 @@ class AICA_Logger {
 
         $logs = $this->get_logs();
         $logs[] = $log_entry;
-        file_put_contents($this->log_file, json_encode($logs));
+        $this->wp_filesystem->put_contents($this->log_file, wp_json_encode($logs));
     }
 
     public function get_logs() {
-        if (file_exists($this->log_file)) {
-            $logs = json_decode(file_get_contents($this->log_file), true);
+        if ($this->wp_filesystem->exists($this->log_file)) {
+            $logs = json_decode($this->wp_filesystem->get_contents($this->log_file), true);
             return is_array($logs) ? $logs : array();
         }
         return array();
     }
 
     public function clear_logs() {
-        file_put_contents($this->log_file, json_encode(array()));
+        $this->wp_filesystem->put_contents($this->log_file, wp_json_encode(array()));
     }
 
     public function rotate_logs() {
@@ -48,7 +57,7 @@ class AICA_Logger {
             }
         }
 
-        file_put_contents($this->log_file, json_encode($logs_to_keep));
+        $this->wp_filesystem->put_contents($this->log_file, wp_json_encode($logs_to_keep));
     }
 
     public function anonymize_logs_by_user_id($user_id) {
@@ -65,7 +74,7 @@ class AICA_Logger {
             }
             return $log;
         }, $logs);
-        $success = file_put_contents($this->log_file, json_encode($anonymized_logs)) !== false;
+        $success = $this->wp_filesystem->put_contents($this->log_file, wp_json_encode($anonymized_logs)) !== false;
         return $success;
     }
 
@@ -83,7 +92,7 @@ class AICA_Logger {
             }
             return $log;
         }, $logs);
-        $success = file_put_contents($this->log_file, json_encode($anonymized_logs)) !== false;
+        $success = $this->wp_filesystem->put_contents($this->log_file, wp_json_encode($anonymized_logs)) !== false;
         return $success;
     }
     
@@ -101,7 +110,7 @@ class AICA_Logger {
             }
             return $log;
         }, $logs);
-        $success = file_put_contents($this->log_file, json_encode($anonymized_logs)) !== false;
+        $success = $this->wp_filesystem->put_contents($this->log_file, wp_json_encode($anonymized_logs)) !== false;
         return $success;
     }
     
@@ -110,12 +119,12 @@ class AICA_Logger {
         $filtered_logs = array_filter($logs, function($log) use ($timestamp) {
             return strtotime($log['timestamp']) > strtotime($timestamp);
         });
-        $success = file_put_contents($this->log_file, json_encode(array_values($filtered_logs)));
+        $success = $this->wp_filesystem->put_contents($this->log_file, wp_json_encode(array_values($filtered_logs)));
         return $success;
     }
 
     public function delete_old_logs($retention_period) {
-        $cutoff_date = date('Y-m-d H:i:s', strtotime("-$retention_period days"));
+        $cutoff_date = gmdate('Y-m-d H:i:s', strtotime("-$retention_period days"));
         $this->delete_logs_by_timestamp($cutoff_date);
     }
 

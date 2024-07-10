@@ -3,12 +3,13 @@
 Plugin Name: Simple AI Assistant
 Plugin URI: https://github.com/ivanmadman/Simple-AI-Assistant
 Description: A plugin to provide a chat on your website with the actual page passed as context
-Version: 0.9
+Version: 1.0.0
 Requires at least: 5.0
 Tested up to: 6.5
 Requires PHP: 7.5
 Author: Ivanmadman
 Author URI: https://github.com/IvanMadman
+Text domain: simple-ai-assistant
 License: GPL2
 License URI: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 */
@@ -65,19 +66,22 @@ function aica_add_chat_bubble() {
     $chat_bubble_text = esc_html(get_option('aica_chat_bubble_text', 'Chat'));
     $chat_bubble_color = esc_attr(get_option('aica_chat_bubble_color', '#4a90e2'));
     $chat_bubble_position = esc_attr(get_option('aica_chat_bubble_position', 'bottom-right'));
-
-    echo "<div id='aica-chat-bubble' class='aica-{$chat_bubble_position}' style='background-color: {$chat_bubble_color};'>{$chat_bubble_text}</div>";
-    echo '<div id="aica-chat-window" style="display:none;">';
-    echo '  <div id="aica-chat-header">';
-    echo '    <span>' . $chat_bubble_title . '</span>';
-    echo '    <button id="aica-close-button">X</button>';
-    echo '  </div>';
-    echo '  <div id="aica-chat-messages"></div>';
-    echo '  <div id="aica-chat-input">';
-    echo '    <input type="text" id="aica-user-input" placeholder="Type your message...">';
-    echo '    <button id="aica-send-button">Send</button>';
-    echo '  </div>';
-    echo '</div>';
+    ?>
+    <div id='aica-chat-bubble' class='aica-<?php echo esc_attr($chat_bubble_position); ?>' style='background-color: <?php echo esc_attr($chat_bubble_color); ?>;'>
+        <?php echo esc_html($chat_bubble_text); ?>
+    </div>
+    <div id="aica-chat-window" style="display:none;">
+        <div id="aica-chat-header">
+            <span><?php echo esc_html($chat_bubble_title); ?></span>
+            <button id="aica-close-button"><?php echo esc_html_x('X', 'close button', 'simple-ai-assistant'); ?></button>
+        </div>
+        <div id="aica-chat-messages"></div>
+        <div id="aica-chat-input">
+            <input type="text" id="aica-user-input" placeholder="<?php echo esc_attr__('Type your message...', 'simple-ai-assistant'); ?>">
+            <button id="aica-send-button"><?php echo esc_html__('Send', 'simple-ai-assistant'); ?></button>
+        </div>
+    </div>
+    <?php
 }
 add_action('wp_footer', 'aica_add_chat_bubble');
 
@@ -167,7 +171,7 @@ function aica_handle_chat_request() {
                 'Authorization' => 'Bearer ' . $api_key,
                 'Content-Type' => 'application/json',
             ),
-            'body' => json_encode($data),
+            'body' => wp_json_encode($data),
             'timeout' => 30,
         ));
 
@@ -337,12 +341,11 @@ function aica_add_privacy_policy_content() {
     if (!function_exists('wp_add_privacy_policy_content')) {
         return;
     }
-
-    $content = sprintf(
+    $content = sprintf( /* translators: %d: data retention period */ 
         __('When you use the AI Chat Assistant on our website, we collect and store your chat messages and interactions to provide and improve the service. This data is retained for %d days, after which it is automatically deleted. You can request deletion of your data at any time through the chat interface. For more information, please see our full Privacy Policy.', 'aica'),
         get_option('aica_data_retention_period', 30)
     );
-
+    
     wp_add_privacy_policy_content('AI Chat Assistant', wp_kses_post(wpautop($content, false)));
 }
 add_action('admin_init', 'aica_add_privacy_policy_content');
@@ -356,7 +359,7 @@ function aica_get_token_usage($start_date = null, $end_date = null) {
 
 function aica_update_token_usage($tokens) {
     $usage = get_option('aica_token_usage', array());
-    $current_month = date('Y-m');
+    $current_month = gmdate('Y-m');
     
     if (!isset($usage[$current_month])) {
         $usage[$current_month] = 0;
@@ -403,7 +406,7 @@ function aica_export_chat_logs() {
 
     header('Content-Type: text/csv');
     header('Content-Disposition: attachment; filename="chat_logs.csv"');
-    echo $csv;
+    echo esc_html($csv);
     exit;
 }
 add_action('admin_post_aica_export_logs', 'aica_export_chat_logs');

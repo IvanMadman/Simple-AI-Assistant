@@ -72,22 +72,42 @@ function aica_sanitize_array($input) {
     return !is_array($input) ? array() : array_map('sanitize_text_field', $input);
 }
 
+// Add a function to verify nonce when loading the settings page
+function aica_verify_settings_nonce() {
+    // Check if we're on the settings page
+    if (isset($_GET['page']) && $_GET['page'] === 'aica-settings') {
+        // If nonce is not set or invalid, create a new one and redirect
+        if (!isset($_GET['_wpnonce']) || !wp_verify_nonce($_GET['_wpnonce'], 'aica_settings_nonce')) {
+            $nonce = wp_create_nonce('aica_settings_nonce');
+            wp_safe_redirect(add_query_arg('_wpnonce', $nonce, remove_query_arg('_wpnonce')));
+            exit;
+        }
+    }
+}
+add_action('admin_init', 'aica_verify_settings_nonce');
+
+
 function aica_render_settings_page() {
-    $active_tab = isset($_GET['tab']) ? $_GET['tab'] : 'general';
+    if (!isset($_GET['_wpnonce']) || !wp_verify_nonce($_GET['_wpnonce'], 'aica_settings_nonce')) {
+        wp_die('Security check failed');
+    }
+    $active_tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'general';
     ?>
     <div class="wrap">
         <h1>Simple AI Assistant Settings</h1>
         
         <h2 class="nav-tab-wrapper">
-            <a href="?page=aica-settings&tab=general" class="nav-tab <?php echo $active_tab == 'general' ? 'nav-tab-active' : ''; ?>">General Settings</a>
-            <a href="?page=aica-settings&tab=graphic" class="nav-tab <?php echo $active_tab == 'graphic' ? 'nav-tab-active' : ''; ?>">Graphic Settings</a>
+            <a href="<?php echo esc_url(wp_nonce_url(admin_url('options-general.php?page=aica-settings&tab=general'), 'aica_settings_nonce')); ?>" class="nav-tab <?php echo $active_tab == 'general' ? 'nav-tab-active' : ''; ?>">General Settings</a>
+            <a href="<?php echo esc_url(wp_nonce_url(admin_url('options-general.php?page=aica-settings&tab=graphic'), 'aica_settings_nonce')); ?>" class="nav-tab <?php echo $active_tab == 'graphic' ? 'nav-tab-active' : ''; ?>">Graphic Settings</a>
         </h2>
         
         <form method="post" action="options.php">
+            <?php wp_nonce_field('aica_settings_nonce', 'aica_settings_nonce'); ?>
             <?php
             if ($active_tab == 'general') {
                 settings_fields('aica_settings_group');
                 do_settings_sections('aica_settings_group');
+                wp_nonce_field('aica_general_settings_nonce', 'aica_general_settings_nonce_field');
                 aica_render_general_settings();
             } else {
                 settings_fields('aica_graphic_settings_group');
@@ -108,8 +128,8 @@ function aica_render_settings_page() {
         <?php if ($active_tab == 'general'): ?>
             <h2>Token Usage</h2>
             <?php
-            $current_month_start = date('Y-m-01');
-            $current_month_end = date('Y-m-t');
+            $current_month_start = gmdate('Y-m-01');
+            $current_month_end = gmdate('Y-m-t');
             $current_month_usage = aica_get_token_usage($current_month_start, $current_month_end);
             $total_usage = aica_get_token_usage();
             ?>
@@ -118,7 +138,8 @@ function aica_render_settings_page() {
 
             <h2>Chat Logs</h2>
             
-            <form method="post" action="<?php echo admin_url('admin-post.php'); ?>">
+            <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
+                <?php wp_nonce_field('aica_export_logs', 'aica_export_logs_nonce'); ?>
                 <input type="hidden" name="action" value="aica_export_logs">
                 <?php submit_button('Export Chat Logs', 'secondary', 'export_logs'); ?>
             </form>
@@ -153,14 +174,14 @@ function aica_render_settings_page() {
              $total_pages = ceil($logs_data['total'] / 20);
               if ($total_pages > 1) {
                  echo '<div class="tablenav"><div class="tablenav-pages">';
-                 echo paginate_links(array(
+                 echo wp_kses_post( paginate_links(array(
                         'base' => add_query_arg('log_page', '%#%'),
                        'format' => '',
                        'prev_text' => __('&laquo;'),
                        'next_text' => __('&raquo;'),
                        'total' => $total_pages,
                        'current' => $page
-                ));
+                )));
                 echo '</div></div>';
           }
           ?>
@@ -178,7 +199,7 @@ function aica_render_settings_page() {
                             type: 'POST',
                             data: {
                                 action: 'aica_clear_history',
-                                nonce: '<?php echo wp_create_nonce("aica_clear_history_nonce"); ?>'
+                                nonce: '<?php echo esc_js(wp_create_nonce("aica_clear_history_nonce")); ?>'
                             },
                             success: function(response) {
                                 alert(response.data.message);
@@ -594,7 +615,7 @@ add_action('admin_init', 'aica_handle_reset_graphic_settings');
 
 // Add a link to the settings page on the plugins page
 function aica_add_settings_link($links) {
-    $settings_link = '<a href="options-general.php?page=aica-settings">' . __('Settings') . '</a>';
+    $settings_link = '<a href="' . admin_url('options-general.php?page=aica-settings') . '">' . __('Settings') . '</a>';
     array_unshift($links, $settings_link);
     return $links;
 }
